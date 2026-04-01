@@ -43,11 +43,6 @@
 - Form Data
 - Request Files
 - Request Forms + Files
-- This section is used in:
-- Image classification API
-- Document AI API
-- OCR API
-- NLP text upload API
 
 ## 08 – Error Handling & API Configuration
 - Handling Errors
