@@ -68,32 +68,40 @@ kubectl get nodes
 Using Kind
 kind create cluster
 kubectl get nodes
-📂 Sections
+```
+
+#### 📂Sections
 Folder	Topic
-01-basics	Pods, Deployments
-02-core-concepts	ConfigMaps, Secrets
-03-scaling	HPA
-05-ml-deployment	FastAPI ML
-08-distributed-training	PyTorch/TensorFlow
-🔥 Real ML Use Cases
-Deploy ML model API (FastAPI)
-Autoscale inference
-Batch jobs
-Distributed GPU training
-Canary deployments
-⚠️ Common Mistakes
-Forgetting resource limits
-Not using namespaces
-Hardcoding secrets
-💡 Interview Questions
-Difference between Deployment & StatefulSet?
-How does HPA work?
-How to deploy ML model on Kubernetes?
-🧰 Debug Commands
+- 01-basics	Pods, Deployments
+- 02-core-concepts	ConfigMaps, Secrets
+- 03-scaling	HPA
+- 05-ml-deployment	FastAPI ML
+- 08-distributed-training	PyTorch/TensorFlow
+
+#### 🔥 Real ML Use Cases
+- Deploy ML model API (FastAPI)
+- Autoscale inference
+- Batch jobs
+- Distributed GPU training
+- Canary deployments
+
+#### ⚠️ Common Mistakes
+- Forgetting resource limits
+- Not using namespaces
+- Hardcoding secrets
+
+#### 💡 Interview Questions
+- Difference between Deployment & StatefulSet?
+- How does HPA work?
+- How to deploy ML model on Kubernetes?
+
+#### 🧰 Debug Commands
+```bash
 kubectl get pods
 kubectl describe pod <pod>
 kubectl logs <pod>
 kubectl delete pod <pod>
+```
 
 ---
 
@@ -104,12 +112,17 @@ __pycache__/
 .env
 *.log
 venv/
-📄 requirements.txt
+```
+
+## 📄 requirements.txt
+```
 fastapi
 uvicorn
 scikit-learn
 numpy
-📁 01-basics
+
+```
+## 📁 01-basics
 📄 01-basics/README.md
 # 📦 Kubernetes Basics
 
@@ -121,7 +134,7 @@ kubectl get pods
 kubectl describe pod <pod>
 kubectl logs <pod>
 kubectl delete -f pods.yaml
-
+```
 ---
 
 ## 📄 01-basics/pods.yaml
@@ -136,7 +149,10 @@ spec:
       image: nginx
       ports:
         - containerPort: 80
-📄 01-basics/deployments.yaml
+```
+
+## 📄 01-basics/deployments.yaml
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -158,7 +174,9 @@ spec:
             limits:
               cpu: "500m"
               memory: "256Mi"
-📄 01-basics/services.yaml
+```              
+## 📄 01-basics/services.yaml
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -171,28 +189,39 @@ spec:
     - port: 80
       targetPort: 80
       nodePort: 30007
-📄 01-basics/kubectl-commands.md
-# Useful Commands
+```
 
+## 📄 01-basics/kubectl-commands.md
+# Useful Commands
+```bash
 kubectl get pods
 kubectl get svc
 kubectl describe pod <pod>
 kubectl logs <pod>
 kubectl delete pod <pod>
-📁 02-core-concepts
-📄 namespaces.yaml
+```
+
+## 📁 02-core-concepts
+## 📄 namespaces.yaml
+```yaml
 apiVersion: v1
 kind: Namespace
 metadata:
   name: ml-namespace
-📄 configmaps.yaml
+```
+
+## 📄 configmaps.yaml
+```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: app-config
 data:
   MODEL_NAME: "iris-model"
-📄 secrets.yaml
+```
+
+## 📄 secrets.yaml
+```yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -200,7 +229,10 @@ metadata:
 type: Opaque
 data:
   API_KEY: dGVzdA==  # base64 encoded
-📄 volumes.yaml
+```
+
+## 📄 volumes.yaml
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -216,13 +248,17 @@ spec:
   volumes:
     - name: storage
       emptyDir: {}
-📄 02-core-concepts/README.md
+```      
+## 📄 02-core-concepts/README.md
 # ⚙️ Core Concepts
-
+```bash
 kubectl apply -f namespaces.yaml
 kubectl get namespaces
-📁 03-scaling
-📄 hpa.yaml
+```
+
+## 📁 03-scaling
+## 📄 hpa.yaml
+```yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -241,10 +277,14 @@ spec:
         target:
           type: Utilization
           averageUtilization: 50
-📄 vpa.md
+```
+
+## 📄 vpa.md
 Vertical Pod Autoscaler adjusts CPU/memory automatically.
-📁 05-ml-deployment
-📄 fastapi-app/app.py
+
+## 📁 05-ml-deployment
+## 📄 fastapi-app/app.py
+```python
 from fastapi import FastAPI
 import numpy as np
 
@@ -258,7 +298,10 @@ def read_root():
 def predict(data: list):
     arr = np.array(data)
     return {"prediction": arr.mean()}
-📄 fastapi-app/Dockerfile
+
+```    
+## 📄 fastapi-app/Dockerfile
+```Dockerfile
 FROM python:3.10
 
 WORKDIR /app
@@ -267,11 +310,17 @@ COPY . .
 RUN pip install -r requirements.txt
 
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
-📄 fastapi-app/requirements.txt
+```
+
+## 📄 fastapi-app/requirements.txt
+```
 fastapi
 uvicorn
 numpy
-📄 deployment.yaml
+```
+
+## 📄 deployment.yaml
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -291,7 +340,9 @@ spec:
           image: ml-api:latest
           ports:
             - containerPort: 8000
-📄 service.yaml
+```            
+## 📄 service.yaml
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -304,8 +355,11 @@ spec:
     - port: 80
       targetPort: 8000
       nodePort: 30008
-📁 08-distributed-training
-📄 pytorch-job.yaml
+```
+
+## 📁 08-distributed-training
+## 📄 pytorch-job.yaml
+```yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -318,7 +372,10 @@ spec:
           image: pytorch/pytorch
           command: ["python", "train.py"]
       restartPolicy: Never
-📄 tf-job.yaml
+```
+
+## 📄 tf-job.yaml
+```yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -331,8 +388,10 @@ spec:
           image: tensorflow/tensorflow
           command: ["python", "train.py"]
       restartPolicy: Never
-📁 09-monitoring
-📄 prometheus.yaml
+```      
+## 📁 09-monitoring
+## 📄 prometheus.yaml
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -341,7 +400,10 @@ spec:
   containers:
     - name: prometheus
       image: prom/prometheus
-📄 grafana.yaml
+```
+
+### 📄 grafana.yaml
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -350,15 +412,20 @@ spec:
   containers:
     - name: grafana
       image: grafana/grafana
-📁 10-production
-📄 helm/README.md
+```
+
+## 📁 10-production
+## 📄 helm/README.md
 # Helm
 
-Helm helps package Kubernetes apps.
-
+** Helm helps package Kubernetes apps.
+```bash
 helm create ml-chart
 helm install ml-app ./ml-chart
-📄 ci-cd/github-actions.yaml
+```
+
+## 📄 ci-cd/github-actions.yaml
+```yaml
 name: CI/CD Pipeline
 
 on:
@@ -372,18 +439,22 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build Docker Image
         run: docker build -t ml-api .
-📁 assets
-📄 architecture-diagrams.md
+```        
+## 📁 assets
+## 📄 architecture-diagrams.md
 # Architecture Diagrams
 
-ML Deployment Flow:
+** ML Deployment Flow:
 
 User → Ingress → Service → Pods → Model
-🚀 FINAL NOTES
-Deploy Full ML App
+
+## 🚀 FINAL NOTES
+** Deploy Full ML App
+```bash
 kubectl apply -f deployment.yaml
 kubectl apply -f service.yaml
 kubectl get pods
 Debug
 kubectl logs <pod>
 kubectl describe pod <pod>
+```
