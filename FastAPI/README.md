@@ -119,9 +119,10 @@ By completing this repository, you will:
 
 ```bash
 # Clone repo
-git clone <your-repo-link>
+git clone https://github.com/rsk15035032/MLOps.git
 
 # Enter any module
+cd FastAPI
 cd 01.FirstStep
 
 # Run app
