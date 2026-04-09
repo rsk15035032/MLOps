@@ -230,7 +230,7 @@ Challenges & Solutions:
 - Hands-on: Serverless Prediction API
 ## 02-aws-lambda/lambda_function.py
 ```python
-Pythonimport json
+import json
 import boto3
 import joblib
 import numpy as np
@@ -286,10 +286,10 @@ aws lambda create-function \
 ## 🧠 SECTION 3: AWS SageMaker — Full ML Lifecycle
 SageMaker is the complete platform: notebooks, training jobs, hyperparameter tuning, model registry, endpoints, and pipelines.
 Hands-on: Train & Deploy Scikit-Learn Model
-
+--- 
 ## 03-sagemaker/train.py (Script Mode)
 ```python
-Pythonimport argparse
+import argparse
 import joblib
 import os
 from sklearn.ensemble import RandomForestClassifier
@@ -309,8 +309,11 @@ if __name__ == "__main__":
     clf.fit(X, y)
     
     joblib.dump(clf, "/opt/ml/model/model.joblib")
-Training & Deployment (via SageMaker Python SDK)
-Pythonfrom sagemaker.sklearn.estimator import SKLearn
+```
+--- 
+##  Training & Deployment (via SageMaker Python SDK)
+```python
+from sagemaker.sklearn.estimator import SKLearn
 from sagemaker import get_execution_role
 
 role = get_execution_role()
@@ -332,6 +335,7 @@ predictor = sklearn_estimator.deploy(
     instance_type='ml.t2.medium'
 )
 ```
+--- 
 Hyperparameter Tuning: Use HyperparameterTuner with multiple jobs.
 💰 Cost Tip: Use Managed Spot Training (up to 90% savings) and Serverless Inference endpoints.
 
@@ -340,7 +344,7 @@ Amazon Bedrock gives you access to top foundation models (Claude 3, Llama, Titan
 Hands-on: Invoke Claude
 ## 04-bedrock/chatbot.py
 ```python
-Pythonimport boto3
+import boto3
 import json
 
 bedrock = boto3.client(service_name='bedrock-runtime', region_name='us-east-1')
