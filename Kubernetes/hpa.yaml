@@ -1,0 +1,43 @@
+apiVersion: autoscaling/v2  # Latest stable API for advanced autoscaling features
+kind: HorizontalPodAutoscaler  # Automatically scales pods based on metrics
+
+metadata:
+  name: clothing-classifier-hpa  # Name of the autoscaler resource
+  labels:
+    app: clothing-classifier  # Useful for observability and grouping
+
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: clothing-classifier  
+    # Target resource to scale
+    # HPA will dynamically adjust replicas of this Deployment
+
+  minReplicas: 2  
+  # Lower bound → ensures high availability (never scale to 0)
+  # Important for APIs (cold starts avoided)
+
+  maxReplicas: 10  
+  # Upper bound → prevents runaway scaling and cost explosion
+
+  metrics:
+  - type: Resource  
+    # Uses built-in Kubernetes metrics (via Metrics Server)
+
+    resource:
+      name: cpu  
+      # CPU-based scaling (most common and reliable baseline)
+
+      target:
+        type: Utilization  
+        # % of requested CPU (NOT actual CPU cores)
+
+        averageUtilization: 50  
+        # Target = 50% of requested CPU
+        # Example:
+        # If request = 250m → target usage = ~125m per pod
+        #
+        # Behavior:
+        # - If avg CPU > 50% → scale up
+        # - If avg CPU < 50% → scale down

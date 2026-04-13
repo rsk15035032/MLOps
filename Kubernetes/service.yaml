@@ -1,0 +1,37 @@
+apiVersion: v1  # Core Kubernetes API group for basic resources like Service, Pod
+kind: Service   # Exposes a set of Pods as a stable network endpoint
+
+metadata:
+  name: clothing-classifier  # DNS name of the service (accessible inside cluster)
+  labels:
+    app: clothing-classifier  # Helps in grouping, observability, and selection
+
+spec:
+  type: NodePort  
+  # Exposes the service on each Node's IP at a static port (nodePort)
+  # Suitable for:
+  # - Local development (Minikube, Kind)
+  # - Simple external access without cloud load balancer
+  # NOT ideal for production (prefer LoadBalancer or Ingress)
+
+  selector:
+    app: clothing-classifier  
+    # Routes traffic ONLY to pods with this label
+    # Must match Deployment's pod template labels exactly
+
+  ports:
+  - name: http  # Naming ports is a best practice (used in service meshes, monitoring)
+    
+    protocol: TCP  # Most HTTP APIs use TCP
+
+    port: 8080  
+    # Service port (cluster-internal)
+    # Other services inside cluster call: http://clothing-classifier:8080
+
+    targetPort: 8080  
+    # Container port where your FastAPI app is running
+
+    nodePort: 30080  
+    # External port exposed on each node (range: 30000–32767)
+    # Access via: http://<NodeIP>:30080
+    # Hardcoding is fine for dev, but avoid in production unless necessary

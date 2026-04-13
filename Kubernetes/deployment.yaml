@@ -1,0 +1,80 @@
+apiVersion: apps/v1  # Uses the stable API for managing deployments (recommended for production)
+kind: Deployment     # Ensures declarative updates, rolling deployments, and self-healing
+
+metadata:
+  name: clothing-classifier  # Unique name of the deployment within the namespace
+  labels:
+    app: clothing-classifier  # Label used for grouping and selecting resources
+
+spec:
+  replicas: 2  # Desired number of pod replicas (ensures high availability and load distribution)
+
+  selector:
+    matchLabels:
+      app: clothing-classifier  
+      # MUST match pod template labels; used by Deployment to manage the correct set of pods
+
+  template:
+    metadata:
+      labels:
+        app: clothing-classifier  
+        # Labels applied to pods; used by Services and Deployment selector
+
+    spec:
+      containers:
+      - name: clothing-classifier  # Logical container name inside the pod
+
+        image: clothing-classifier:v1  
+        # Docker image (ideally from a registry like ECR/GCR in production)
+        # Tag versioning is critical for reproducibility and rollback
+
+        imagePullPolicy: Never  
+        # 'Never' is only for local/dev environments
+        # In production use:
+        # - Always (for latest images)
+        # - IfNotPresent (recommended for versioned images)
+
+        ports:
+        - containerPort: 8080  
+          # Port exposed by the container (must match your FastAPI / app server)
+
+        resources:
+          requests:
+            memory: "256Mi"  
+            cpu: "250m"  
+            # Minimum guaranteed resources → used by scheduler to place pods
+
+          limits:
+            memory: "512Mi"  
+            cpu: "500m"  
+            # Hard cap → prevents a pod from consuming excessive resources
+
+        livenessProbe:
+          httpGet:
+            path: /health  
+            port: 8080  
+            # Endpoint should return 200 OK if app is alive
+
+          initialDelaySeconds: 10  
+          # Wait time before first probe (gives app time to start)
+
+          periodSeconds: 10  
+          # Frequency of health checks
+
+          # If this fails repeatedly → Kubernetes restarts the container
+          # Ensures "self-healing" behavior
+
+        readinessProbe:
+          httpGet:
+            path: /health  
+            port: 8080  
+            # Determines if pod is ready to receive traffic
+
+          initialDelaySeconds: 5  
+          # Faster than liveness → traffic starts sooner
+
+          periodSeconds: 5  
+          # More frequent checks → faster reaction to failures
+
+          # If this fails → pod is removed from Service load balancer
+          # (no restart, just stops receiving traffic)
